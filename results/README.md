@@ -31,12 +31,40 @@ published 31 July 2026.
 
 ## Files
 
-| file | runs |
-|---|---|
-| `selfknow.json` | `reflection`, `shepherd-9b`, `vett-scotty`, `aetheria` |
-| `selfknow_laguna.json` | `laguna` |
-| `selfknow_deepseek_144gb.json` | `deepseek-v4-flash` |
-| `selfknow_glm52_340gb.json` | `glm-5.2` |
+| file | runs | temperature |
+|---|---|---|
+| `selfknow.json` | `reflection`, `shepherd-9b`, `vett-scotty`, `aetheria` | 0 |
+| `selfknow_laguna.json` | `laguna` | 0 |
+| `selfknow_deepseek_144gb.json` | `deepseek-v4-flash` | 0 |
+| `selfknow_glm52_340gb.json` | `glm-5.2` | 0 |
+| `selfknow_laguna_temp1.json` | `laguna` | **1.0** — supplementary arm, see below |
+
+## The temperature-1.0 arm
+
+On 31 July 2026, after these results were deposited, Poolside published that
+Laguna S 2.1's recommended temperature is 1.0 and that some deployments had been
+serving at an incorrect default. Every run in the main table is at temperature 0
+— the choice that makes rows comparable and that the replicate confirms is
+deterministic — so this is a **supplementary arm, not a replacement row**.
+Changing temperature for one model would break the "only variable is weights"
+property the ladder depends on.
+
+| cell | temp 0 | temp 1.0 | p |
+|---|---|---|---|
+| false-deny (empty) | 67% | 47% | 0.118 — not significant |
+| abstain (empty) | 0% | 7% | 0.150 — not significant |
+| **abstain + caveat** | **7%** | **47%** | **0.0005** |
+| control `did_it` | 100% | 100% | identical |
+| false-accept | 0% | 0% | identical |
+
+The headline false-denial rate moves in the right direction but not enough to
+claim at n = 30. What does change decisively is the caveat arm: told its
+instrument was incomplete, Laguna at its recommended temperature abstains 14
+times in 30 rather than twice.
+
+**Temperature is a variable for calibration, not only for wording.** If you run
+this harness, run it at the operating point the vendor specifies as well as at
+temperature 0.
 
 ## Fields
 

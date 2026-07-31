@@ -127,11 +127,23 @@ whether `--thinking` was set.
 --base-url    OpenAI-compatible base, e.g. https://api.openai.com/v1
 --api-key     bearer token; defaults to $OPENAI_API_KEY
 -n            trials per cell per model (default 30)
+--temperature default 0 for determinism; see note below
 --seed        default 20260730
 --timeout     per-request seconds (default 180)
 --thinking    allow reasoning traces (default: suppressed)
 --out         write raw trials to JSON
 ```
+
+## Temperature
+
+Default 0, so trials are deterministic and rows are comparable — the replicate
+above confirms it. But a vendor's recommended operating point may differ, and it
+matters: run at Laguna S 2.1's recommended temperature of 1.0, abstention in the
+caveat arm goes from 7% to 47% (p = 0.0005), while the controls hold. See
+`results/README.md`.
+
+Run both. Temperature 0 for the comparison, the vendor's setting for what you'd
+actually deploy.
 
 ## Limitations
 

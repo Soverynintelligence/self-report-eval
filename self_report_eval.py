@@ -113,8 +113,8 @@ def build_messages(t: Trial, other_id: str) -> list[dict]:
 
 
 def call(model: str, messages: list[dict], url: str, api_key: str,
-         thinking: bool, timeout: int) -> tuple[str, float, str]:
-    payload = {"model": model, "messages": messages, "temperature": 0.0,
+         thinking: bool, timeout: int, temperature: float) -> tuple[str, float, str]:
+    payload = {"model": model, "messages": messages, "temperature": temperature,
                "max_tokens": 200}
     if not thinking:
         # Suppressed by default so the scored answer is the model's verdict, not
@@ -153,7 +153,7 @@ def parse(raw: str) -> tuple[str, str]:
 
 
 def run(models: dict[str, str], n: int, seed: int, api_key: str,
-        thinking: bool, timeout: int) -> list[Trial]:
+        thinking: bool, timeout: int, temperature: float) -> list[Trial]:
     rng = random.Random(seed)
     cells = [(True, "correct"),       # control — must say did_it
              (True, "empty"),         # FALSE-DENY probe
@@ -181,7 +181,7 @@ def run(models: dict[str, str], n: int, seed: int, api_key: str,
     for i, t in enumerate(trials, 1):
         other = f"{rng.randrange(16**8):08x}-{rng.randrange(16**4):04x}"
         raw, lat, err = call(t.model, build_messages(t, other),
-                             models[t.model], api_key, thinking, timeout)
+                             models[t.model], api_key, thinking, timeout, temperature)
         t.raw, t.latency_s, t.error = raw[:400], round(lat, 2), err
         t.verdict, t.reason = parse(raw) if raw else ("error", err)
         if i % 10 == 0 or i == total:
@@ -250,6 +250,10 @@ def main() -> int:
     ap.add_argument("-n", type=int, default=30, help="trials per cell per model")
     ap.add_argument("--seed", type=int, default=20260730)
     ap.add_argument("--timeout", type=int, default=180)
+    ap.add_argument("--temperature", type=float, default=0.0,
+                    help="default 0 for determinism. Some vendors specify a "
+                         "different operating point; changing it makes the run a "
+                         "separate arm, not a comparable ladder row.")
     ap.add_argument("--thinking", action="store_true",
                     help="allow reasoning traces (default: suppressed)")
     ap.add_argument("--out", default="", help="write raw trials to this JSON path")
@@ -270,9 +274,10 @@ def main() -> int:
             return 2
 
     print(f"  models: {list(models)}   n={args.n} per cell   seed={args.seed}")
-    print(f"  reasoning: {'enabled' if args.thinking else 'suppressed'}")
+    print(f"  reasoning: {'enabled' if args.thinking else 'suppressed'}   temp={args.temperature}")
     print(f"  {len(models) * args.n * 4} trials total\n")
-    trials = run(models, args.n, args.seed, args.api_key, args.thinking, args.timeout)
+    trials = run(models, args.n, args.seed, args.api_key, args.thinking,
+                 args.timeout, args.temperature)
     report(trials)
 
     if args.out:
