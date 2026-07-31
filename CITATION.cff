@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "self-report-eval: a baseline for agent self-report reliability"
+message: "If you use this software or its results, please cite the paper."
+type: software
+authors:
+  - family-names: DeOliveira
+    given-names: Jon
+    orcid: "https://orcid.org/0009-0006-9188-739X"
+    affiliation: "SOVERYN Intelligence LLC"
+license: MIT
+repository-code: "https://github.com/Soverynintelligence/self-report-eval"
+preferred-citation:
+  type: article
+  title: "Self-Knowledge Is Not Uniform"
+  authors:
+    - family-names: DeOliveira
+      given-names: Jon
+      orcid: "https://orcid.org/0009-0006-9188-739X"
+      affiliation: "SOVERYN Intelligence LLC"
+  doi: "10.5281/zenodo.21712932"
+  year: 2026
+  publisher:
+    name: Zenodo
